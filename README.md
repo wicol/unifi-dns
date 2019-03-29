@@ -19,10 +19,11 @@ It polls a UniFi controller and writes client names and reserved IP addresses to
 
 | Name                    | Description                                   | Default value        |
 |-------------------------|-----------------------------------------------|----------------------|
-| `UNIFI_POLL_INTERVAL`   | Seconds between API calls to UniFi Controller | `60`                 |
 | `UNIFI_BASEURL`         | URL to UniFi controller                       | `https://unifi:8443` |
 | `UNIFI_USERNAME`        | Username to UniFi controller                  | -                    |
 | `UNIFI_PASSWORD`        | Password to UniFi controller                  | -                    |
+| `UNIFI_POLL_INTERVAL`   | Seconds between API calls to UniFi Controller | `60`                 |
+| `UNIFI_SITE`            | UniFi "site" name                             | `default`            |
 
 * `docker-compose up`
 * UniFi clients with aliases and "fixed IP" (DHCP reservations) will be written to `/etc/dnsmasq.d/unifi.hosts`.

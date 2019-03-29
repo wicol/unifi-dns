@@ -16,7 +16,6 @@ def get_clients():
     r.raise_for_status()
     return sorted(r.json()['data'], key=lambda i: i.get('fixed_ip', ''))
 
-
 for c in get_clients():
     if 'name' in c and 'fixed_ip' in c:
         print(c['fixed_ip'], c['name'])

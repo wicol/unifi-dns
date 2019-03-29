@@ -1,4 +1,4 @@
-version: "3.6"
+version: '3.6'
 services:
   unifi_dns:
     image: unifi-dns
@@ -8,8 +8,8 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - '53:53/tcp'
+      - '53:53/udp'
     # If you want to have the host file(s) on your host
     #volumes:
     #  - ./dnsmasq.d:/etc/dnsmasq.d
@@ -20,5 +20,5 @@ services:
       UNIFI_PASSWORD: 'ubnt'
       # UNIFI_POLL_INTERVAL: 60
       # DNSMASQ_OPTS: ''
-      # Tip: use this to get rid of https-warnings
+      # Tip: use this to get rid of https-warnings in the logs
       #PYTHONWARNINGS: 'ignore:Unverified HTTPS request'
