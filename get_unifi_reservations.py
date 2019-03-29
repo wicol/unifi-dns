@@ -1,22 +1,51 @@
 #!/usr/bin/env python3
 import os
+import re
 import requests
-
 
 baseurl = os.environ.get('UNIFI_BASEURL', 'https://unifi:8443')
 username = os.environ.get('UNIFI_USERNAME')
 password = os.environ.get('UNIFI_PASSWORD')
 site = os.environ.get('UNIFI_SITE', 'default')
+fixed_only = os.environ.get('FIXED_ONLY', False)
+
+
+def get_configured_clients(session):
+    # Get configured clients
+    r = session.get(f'{baseurl}/api/s/{site}/list/user', verify=False)
+    r.raise_for_status()
+    return r.json()['data']
+
+
+def get_active_clients(session):
+    # Get active clients
+    r = session.get(f'{baseurl}/api/s/{site}/stat/sta', verify=False)
+    r.raise_for_status()
+    return r.json()['data']
+
 
 def get_clients():
     s = requests.Session()
+    # Log in to controller
     r = s.post(f'{baseurl}/api/login', json={'username': username, 'password': password}, verify=False)
     r.raise_for_status()
-    r = s.get(f'{baseurl}/api/s/{site}/rest/user', verify=False)
-    r.raise_for_status()
-    return sorted(r.json()['data'], key=lambda i: i.get('fixed_ip', ''))
+    
+    clients = {}
+    # Add clients with alias and reserved IP
+    for c in get_configured_clients(s):
+        if 'name' in c and 'fixed_ip' in c:
+            clients[c['mac']] = {'name': c['name'], 'ip': c['fixed_ip']}
+    if fixed_only is False:
+        # Add active clients with alias
+        for c in get_active_clients(s):
+            if 'name' in c and not c['mac'] in clients:
+                clients[c['mac']] = {'name': c['name'], 'ip': c['ip']}
+    
+    # Return a list of clients filtered on dns-friendly names and sorted by IP
+    friendly_clients = [c for c in clients.values() if re.search('^[a-zA-Z0-9-]+$', c['name'])] 
+    return sorted(friendly_clients, key=lambda i: i['name'])
+
 
 for c in get_clients():
-    if 'name' in c and 'fixed_ip' in c:
-        print(c['fixed_ip'], c['name'])
+    print(c['ip'], c['name'])
 
