@@ -1,15 +1,20 @@
-# What is this
+# What it is
 
 A dnsmasq being populated by DHCP reservations made in a UniFi controller.
 
-# How does it work
+# But why?
 
-It polls a UniFi controller (using an API client from here: https://github.com/frehov/Unifi-Python-API) and writes
-client names and reserved IP addresses to a file being picked up by dnsmasq.
+To make up for the fact that UniFi USG doesn't have hostname override for DHCP-reservations.
 
-# How to set it up:
+# How it works
 
-* Copy docker-compose.example.yml from here
+It polls a UniFi controller and writes client names and reserved IP addresses to a file being picked up by dnsmasq.
+
+# Configuration
+
+## unifi-dns
+
+* Copy `docker-compose.example.yml` from here
 * Set the relevant values for these environment variables:
 
 | Name                    | Description                                   | Default value        |
@@ -22,3 +27,8 @@ client names and reserved IP addresses to a file being picked up by dnsmasq.
 * `docker-compose up`
 * UniFi clients with aliases and "fixed IP" (DHCP reservations) will be written to `/etc/dnsmasq.d/unifi.hosts`.
 * dnsmasq will look in `/etc/dnsmasq.d` and read `*.conf` files as additional config files and `*.hosts` files as additional host files, so feel free to put any additional stuff there.
+
+## UniFi USG
+
+* Go to Settings -> Networks -> LAN
+* Set "DHCP Name Server" to manual and enter the IP of the machine running unifi-dns (and some fallback servers)
