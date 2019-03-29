@@ -10,8 +10,10 @@ services:
     ports:
       - '53:53/tcp'
       - '53:53/udp'
-    # If you want to have the host file(s) on your host
     #volumes:
+    #  # Hosts-files live here
+    #  - ./dnsmasq.hosts:/etc/dnsmasq.hosts
+    #  # Additional config-files live here
     #  - ./dnsmasq.d:/etc/dnsmasq.d
     environment:
       # Commented out = default values

@@ -1,16 +1,15 @@
 #!/bin/sh
-unifi_hosts=/etc/dnsmasq.d/unifi.hosts
+hosts_dir=/etc/dnsmasq.hosts
+unifi_hosts=$hosts_dir/unifi.hosts
 
-dnsmasq -k --addn-hosts=/etc/dnsmasq.d --log-facility=- ${DNSMASQ_OPTS} &
-dnsmasq_pid=$!
+[ -d $hosts_dir ] || mkdir $hosts_dir
+touch $unifi_hosts
+dnsmasq --keep-in-foreground --hostsdir=$hosts_dir --log-facility=- ${DNSMASQ_OPTS} &
 
-touch /etc/dnsmasq.d/unifi.hosts
 while true; do
-    hosts_before=$(cat $unifi_hosts)
-    ./get_unifi_reservations.py > $unifi_hosts
-    hosts_after=$(cat $unifi_hosts)
-    if [ "$hosts_before" != "$hosts_after" ]; then
-        kill -HUP $dnsmasq_pid
+    ./get_unifi_reservations.py > /tmp/fetched_unifi.hosts
+    if ! diff $unifi_hosts /tmp/fetched_unifi.hosts; then
+        mv /tmp/fetched_unifi.hosts $unifi_hosts
     fi
     sleep ${UNIFI_POLL_INTERVAL:-60}
 done
