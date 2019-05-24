@@ -7,7 +7,7 @@ dnsmasq --keep-in-foreground --hostsdir=$hosts_dir --log-facility=- ${DNSMASQ_OP
 
 while true; do
     ./get_unifi_reservations.py > /tmp/current_unifi.hosts
-    if ! diff -N $unifi_hosts /tmp/current_unifi.hosts; then
+    if [ $? = 0 ] && ! diff -N $unifi_hosts /tmp/current_unifi.hosts; then
         mv /tmp/current_unifi.hosts $unifi_hosts
     fi
     sleep ${UNIFI_POLL_INTERVAL:-60}

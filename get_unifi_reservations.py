@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import re
+import sys
+
 import requests
 
 baseurl = os.environ.get('UNIFI_BASEURL', 'https://unifi:8443')
@@ -47,6 +49,12 @@ def get_clients():
     return sorted(friendly_clients, key=lambda i: i['name'])
 
 
-for c in get_clients():
-    print(c['ip'], c['name'])
+if __name__ == '__main__':
+    try:
+        for c in get_clients():
+            print(c['ip'], c['name'])
+    except requests.exceptions.ConnectionError:
+        print(f'Could not connect to unifi controller at {baseurl}', file=sys.stderr)
+        exit(1)
+
 
