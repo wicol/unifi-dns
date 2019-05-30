@@ -41,7 +41,7 @@ def get_clients():
         # Add active clients with alias
         # Active client IP overrides the reserved one (the actual IP is what matters most)
         for c in get_active_clients(s):
-            if 'name' in c:
+            if 'name' in c and 'ip' in c:
                 clients[c['mac']] = {'name': c['name'], 'ip': c['ip']}
     
     # Return a list of clients filtered on dns-friendly names and sorted by IP
